@@ -32,9 +32,10 @@ def main():
     transport = os.getenv("MCP_TRANSPORT", "stdio")
     if transport == "sse":
         port = int(os.getenv("PORT", "8000"))
+        mcp.settings.port = port
+        mcp.settings.host = "0.0.0.0"
         print(f"Starting SSE server on port {port}...", flush=True)
-        # In FastMCP, transport='sse' uses uvicorn internally.
-        mcp.run(transport="sse", host="0.0.0.0", port=port)
+        mcp.run(transport="sse")
     else:
         mcp.run()
 
