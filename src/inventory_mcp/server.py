@@ -1,6 +1,15 @@
+import os
 from mcp.server.fastmcp import FastMCP
-# Create a FastMCP server
-mcp = FastMCP("inventory-mcp")
+
+# 1. Initialize FastMCP with SSE configurations built-in
+# This ensures web servers find the correct endpoints during deployment
+mcp = FastMCP(
+    "inventory-mcp",
+    host="0.0.0.0",
+    port=int(os.getenv("PORT", "8000")),
+    sse_path="/mcp"
+)
+
 # Mock database
 INVENTORY = [
     {"id": "p1", "name": "Wireless Mouse", "category": "Electronics", "stock": 45, "price": 29.99},
@@ -12,6 +21,7 @@ INVENTORY = [
     {"id": "p7", "name": "Webcam 1080p", "category": "Electronics", "stock": 0, "price": 59.99},
     {"id": "p8", "name": "Mousepad", "category": "Accessories", "stock": 200, "price": 12.99},
 ]
+
 @mcp.tool()
 def search_products(query: str) -> list[dict]:
     """Search for products in the inventory by name or category."""
@@ -20,6 +30,7 @@ def search_products(query: str) -> list[dict]:
         item for item in INVENTORY
         if query in item["name"].lower() or query in item["category"].lower()
     ]
+
 @mcp.tool()
 def get_low_stock_items(threshold: int = 10) -> list[dict]:
     """Get a list of products that have a stock level equal to or below the threshold."""
@@ -27,18 +38,22 @@ def get_low_stock_items(threshold: int = 10) -> list[dict]:
         item for item in INVENTORY
         if item["stock"] <= threshold
     ]
+
+# 2. Expose the underlying ASGI app for production web servers (Uvicorn/Gunicorn)
+app = mcp.get_asgi_app()
+
 def main():
-    import os
+    import uvicorn
+    # Reads transport; defaults to stdio for local debugging, or uses uvicorn for sse
     transport = os.getenv("MCP_TRANSPORT", "stdio")
+    
     if transport == "sse":
         port = int(os.getenv("PORT", "8000"))
-        mcp.settings.port = port
-        mcp.settings.host = "0.0.0.0"
-        mcp.settings.sse_path = "/mcp"
         print(f"Starting SSE server on port {port} at /mcp...", flush=True)
-        mcp.run(transport="sse")
+        uvicorn.run(app, host="0.0.0.0", port=port)
     else:
-        mcp.run()
+        mcp.run(transport="stdio")
 
+# 3. Local fallback block for standard debugging/local testing
 if __name__ == "__main__":
     main()
