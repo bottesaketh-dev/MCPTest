@@ -1,17 +1,13 @@
 import asyncio
-from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
+from mcp import ClientSession
+from mcp.client.sse import sse_client
 
 async def main():
-    # Define the parameters to run our MCP server
-    server_params = StdioServerParameters(
-        command="python",
-        args=["src/inventory_mcp/server.py"]
-    )
-
-    print("Starting MCP server...")
-    async with stdio_client(server_params) as (read, write):
-        async with ClientSession(read, write) as session:
+    url = "https://mcptest-wzt4.onrender.com/mcp"
+    print(f"Connecting to remote MCP server at {url}...")
+    
+    async with sse_client(url) as streams:
+        async with ClientSession(*streams) as session:
             # Initialize the connection
             await session.initialize()
             print("Connected successfully!")

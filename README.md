@@ -32,7 +32,7 @@ Once deployed, the CTO simply adds the HTTPS endpoint to their AI config. No cod
       "command": "curl",
       "args": [
         "-s",
-        "https://YOUR-DEPLOYED-URL.onrender.com/sse"
+        "https://YOUR-DEPLOYED-URL.onrender.com/mcp"
       ]
     }
   }

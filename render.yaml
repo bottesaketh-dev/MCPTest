@@ -3,7 +3,7 @@ services:
     name: inventory-mcp
     env: docker
     plan: free
-    healthCheckPath: /sse
+    healthCheckPath: /mcp
     envVars:
       - key: MCP_TRANSPORT
         value: sse

@@ -34,7 +34,8 @@ def main():
         port = int(os.getenv("PORT", "8000"))
         mcp.settings.port = port
         mcp.settings.host = "0.0.0.0"
-        print(f"Starting SSE server on port {port}...", flush=True)
+        mcp.settings.sse_path = "/mcp"
+        print(f"Starting SSE server on port {port} at /mcp...", flush=True)
         mcp.run(transport="sse")
     else:
         mcp.run()
