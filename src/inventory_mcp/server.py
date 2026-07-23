@@ -28,8 +28,15 @@ def get_low_stock_items(threshold: int = 10) -> list[dict]:
         if item["stock"] <= threshold
     ]
 def main():
-    # Initialize and run the server
-    mcp.run()
+    import os
+    transport = os.getenv("MCP_TRANSPORT", "stdio")
+    if transport == "sse":
+        port = int(os.getenv("PORT", "8000"))
+        print(f"Starting SSE server on port {port}...", flush=True)
+        # In FastMCP, transport='sse' uses uvicorn internally.
+        mcp.run(transport="sse", host="0.0.0.0", port=port)
+    else:
+        mcp.run()
 
 if __name__ == "__main__":
     main()

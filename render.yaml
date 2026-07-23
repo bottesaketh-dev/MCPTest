@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: inventory-mcp
+    env: docker
+    plan: free
+    healthCheckPath: /sse
+    envVars:
+      - key: MCP_TRANSPORT
+        value: sse
+      - key: PORT
+        value: 8000

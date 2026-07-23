@@ -12,30 +12,36 @@ This provides:
 This server uses `FastMCP` (via Python) to expose a mock product inventory to an AI agent. It provides two tools:
 - `search_products(query)`: Search by product name or category.
 - `get_low_stock_items(threshold)`: Find items that are running low.
-## How to Use This MCP
+## How to Use This MCP (Zero Python Required)
 
-Because this is hosted on GitHub and configured as a standard Python package, it can be run **instantly** by any AI tool that supports MCP, without needing to manually clone the repository!
+To prove this to your CTO, you don't even need Python installed locally. You can deploy this server to the cloud and connect to it over HTTPS.
 
-### Option 1: Claude Desktop
+### 1. Cloud Deployment (1-Click)
+This repository includes a `render.yaml` and `Dockerfile`. You can deploy this instantly to [Render.com](https://render.com) for free:
+1. Connect your Render account to this GitHub repository.
+2. Render will automatically detect the `render.yaml` and deploy it as a web service.
+3. Once deployed, you will get a URL like `https://inventory-mcp.onrender.com`.
 
-You can add this directly to your Claude Desktop `claude_desktop_config.json`:
+### 2. Connect Your AI (Claude Desktop / Cursor)
+Once deployed, the CTO simply adds the HTTPS endpoint to their AI config. No code, no Python, just an API link:
 
 ```json
 {
   "mcpServers": {
     "inventory": {
-      "command": "uvx",
+      "command": "curl",
       "args": [
-        "--from",
-        "git+https://github.com/bottesaketh-dev/MCPTest.git",
-        "inventory-mcp"
+        "-s",
+        "https://YOUR-DEPLOYED-URL.onrender.com/sse"
       ]
     }
   }
 }
 ```
 
-### Option 2: Running Locally (For the CTO Demo)
+*Note: Since standard Claude Desktop config expects a command, we just use `curl -s` (or you can use the Antigravity SSE connection UI).*
+
+### Alternative: Running Locally (For Development)
 
 If you have [uv](https://docs.astral.sh/uv/) installed, you can start the server locally in one command:
 ```bash
