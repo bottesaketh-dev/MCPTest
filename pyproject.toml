@@ -1,0 +1,16 @@
+[project]
+name = "inventory-mcp"
+version = "0.1.0"
+description = "Product Inventory MCP Server PoC"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+]
+
+[project.scripts]
+inventory-mcp = "inventory_mcp.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
