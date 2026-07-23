@@ -40,7 +40,7 @@ def get_low_stock_items(threshold: int = 10) -> list[dict]:
     ]
 
 # 2. Expose the underlying ASGI app for production web servers (Uvicorn/Gunicorn)
-app = mcp.sse_app
+app = mcp.sse_app()
 
 def main():
     import uvicorn
